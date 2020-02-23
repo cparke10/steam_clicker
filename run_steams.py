@@ -36,26 +36,26 @@ def screengrab():
 # this method takes in a template subimage and matches it to the current OSRS client graphic, returning the location
 # of the subimage within the window
 def locate_temp(path):
-    bank_temp = cv2.imread(path, 1)
+    template = cv2.imread(path, 1)
 
-    bank_grab = screengrab()
+    window = screengrab()
 
     meth = 'cv2.TM_SQDIFF_NORMED'
     method = eval('cv2.TM_CCOEFF')
 
     # Apply template Matching
-    res = cv2.matchTemplate(bank_grab, bank_temp, method)
+    res = cv2.matchTemplate(window, template, method)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
-    w, h, _ = bank_temp.shape
+    w, h, _ = template.shape
     top_left = max_loc
     bottom_right = (top_left[0] + w, top_left[1] + h)
 
     # debug UI showing template match bounding box overlayed with screengrab of OSRS client
-    cv2.rectangle(bank_grab, (top_left[0] + w, top_left[1] + h), (bottom_right[0] - w, bottom_right[1] - h), (255, 100, 100), 20)
+    cv2.rectangle(window, (top_left[0] + w, top_left[1] + h), (bottom_right[0] - w, bottom_right[1] - h), (255, 100, 100), 20)
     plt.subplot(121),plt.imshow(res,cmap = 'gray')
     plt.title('Matching Rresult'), plt.xticks([]), plt.yticks([])
-    plt.subplot(122),plt.imshow(bank_grab,cmap = 'gray')
+    plt.subplot(122),plt.imshow(window,cmap = 'gray')
     plt.title('Detected Point'), plt.xticks([]), plt.yticks([])
     plt.suptitle(meth)
     plt.show()
