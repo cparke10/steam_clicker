@@ -1,13 +1,13 @@
 import pyautogui as pag
 import random
 import cv2
-from PIL import Image
 from matplotlib import pyplot as plt
 import time
 import numpy as np
-import os
 
 
+# global counter for number of runs to be used in determining when to pull stam pots, glory rings, and binding necklaces
+# from bank and when to hit NPC contact
 run_count = 0
 
 def main():
@@ -31,6 +31,10 @@ def screengrab():
 
     return bank_grab
 
+# in: path for template image
+# out: bounding box in form of (x1, y1), (x2, y2)
+# this method takes in a template subimage and matches it to the current OSRS client graphic, returning the location
+# of the subimage within the window
 def locate_temp(path):
     bank_temp = cv2.imread(path, 1)
 
@@ -40,7 +44,6 @@ def locate_temp(path):
     method = eval('cv2.TM_CCOEFF')
 
     # Apply template Matching
-
     res = cv2.matchTemplate(bank_grab, bank_temp, method)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
@@ -60,14 +63,17 @@ def locate_temp(path):
     return top_left, bottom_right
 
 
+# a single run of a steam rune route
 def base_run():
     delay(500)
 
+    # open inventory
     pag.press('f1')
 
-    import numpy
+
+    # locate where the bank is in the minimap and click in the top half of the bank
     start, stop, step = (.9, 1.0, .05)
-    off = random.choice(list(numpy.arange(start, stop, step)))
+    off = random.choice(list(np.arange(start, stop, step)))
 
     top_left, bottom_right = locate_temp('C:\\Users\\jsp4k\\Desktop\\smdev\\chest_temp.PNG')
     xoff = int((bottom_right[0] - top_left[0]) * .45 * off)
@@ -84,7 +90,7 @@ def base_run():
     top_left, bottom_right = locate_temp('C:\\Users\\jsp4k\\Desktop\\smdev\\bank_temp.PNG')
 
     start, stop, step = (.9, 1.2, .05)
-    off = random.choice(list(numpy.arange(start, stop, step)))
+    off = random.choice(list(np.arange(start, stop, step)))
 
     xoff = int((bottom_right[0] - top_left[0]) / 3 * off)
     yoff = int((bottom_right[1] - top_left[1]) / 3 * off)
@@ -104,6 +110,7 @@ def base_run():
     #empty inv
     target_box((1384,1280),(1400, 1345), intensity=100)
 
+    # withdraw stamina pot
     if run_count % 2 == 0:
         target_box((1185, 1108), (1235, 1164), clicktype='right', intensity=210)
         delay(int(11 * random.random()))
@@ -112,6 +119,7 @@ def base_run():
         pag.click()
         delay(int(10 * random.random()))
 
+    # withdraw dueling ring
     if run_count % 4 == 0:
         target_box((1045, 1110), (1100, 1150), clicktype='right', intensity=210)
         delay(int(25 * random.random()))
@@ -120,6 +128,7 @@ def base_run():
         pag.click()
         delay(int(5 * random.random()))
 
+    # withdraw binding necklace
     if run_count % 8 == 0:
         target_box((890, 1080), (930, 1155), clicktype='right', intensity=210)
         delay(int(14 * random.random()))
@@ -135,6 +144,7 @@ def base_run():
     # x bank4
     target_box((1525, 85),(1580, 140), intensity=100)
 
+    # cast NPC contact
     if run_count % 10 == 0:
         pag.press('f5')
         delay(16)
@@ -153,12 +163,15 @@ def base_run():
         delay(23)
         pag.press('space')
 
+    # consume stamina pot
     if run_count % 2 == 0:
         target_box((2080, 900), (2140, 970), intensity=15)
 
+    # equip dueling ring
     if run_count % 4 == 0:
         target_box((2220, 900), (2270, 960), intensity=12)
 
+    # equip binding necklace
     if run_count % 8 == 0:
         target_box((2100, 1000), (2140, 1080), intensity=5)
 
@@ -178,6 +191,7 @@ def base_run():
     target_box((1525, 85),(1580, 140), intensity=100)
 
 
+    # open armor and telport to duel arena via dueling ring
     pag.press('f2')
     target_box((2210, 1390), (2255, 1445), clicktype='right', intensity=210)
 
@@ -187,21 +201,23 @@ def base_run():
     pag.click()
     delay(250)
 
+    # click on bottom portion of minimap to approach altar
     target_box((2100, 526), (2120, 545))
     delay(24 * random.random())
     pag.press('f2')
     delay(24 * random.random())
     target_box((1000, 1000), (1100, 1500), clicktype='')
     delay(10)
+    # zoom out to normalize the following template matching process
     pag.scroll(-2000)
 
 
     time.sleep(8)
     delay(84)
 
-
+    # locate altar on screen
     top_left, bottom_right = locate_temp('C:\\Users\\jsp4k\\Desktop\\smdev\\da_temp.PNG')
-    random.choice(list(numpy.arange(start, stop, step)))
+    random.choice(list(np.arange(start, stop, step)))
     xoff = int((bottom_right[0] - top_left[0]) * .4 * off)
     yoff = int((bottom_right[1] - top_left[1]) * .4 * off)
     top_left = top_left[0] + xoff, top_left[1] + yoff
@@ -215,24 +231,28 @@ def base_run():
 
     delay(79)
 
+    # open inventory
     pag.press('f1')
 
 
 
-
+    # select water rune
     target_box((1830, 900), (1900, 950))
     delay(20)
+    # select fire altar
     target_box((640, 325), (740, 390))
-    delay(67, deterministic=True) #vmust not have random interruption between alar click and MI cast
+    delay(67, deterministic=True)
+    # open magic menu
     pag.press('f5')
+    # select magic imbue
     delay(20, deterministic=True)
     target_box((1815, 1072), (1850, 1100))
     delay(13, deterministic=True)
+    # open inventory
     pag.press('f1')
     delay(55, deterministic=True)
 
     # empty pouches
-
     pag.keyDown('shift')
     delay(2, deterministic=True)
     target_box((1960,900),(2020, 970), intensity=random.random() * 4, deterministic=True)
@@ -242,22 +262,24 @@ def base_run():
     pag.keyUp('shift')
     delay(2, deterministic=True)
 
+    # select water altar
     target_box((1830, 900), (1900, 950), deterministic=True)
     delay(10, deterministic=True)
     target_box((1070, 820), (1190, 920), deterministic=True)
 
+    # open armor
     pag.press('f2')
     target_box((2210, 1390), (2255, 1445), clicktype='right')
 
+    # teleport to castle wars
+    # teleport to castle wars
     delay(int(20 * random.random()))
     pag.moveRel(yOffset=180 + random.random() * 10)
     delay()
     pag.click()
 
 
-
-
-
+# random delay function
 def delay(intensity=42, deterministic=False):
     intensity = int(intensity)
     amp = random.choice(
