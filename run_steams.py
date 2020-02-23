@@ -295,6 +295,12 @@ def delay(intensity=42, deterministic=False):
         time.sleep(amp)
         delay(intensity-1, deterministic)
 
+# in: top left bounding box coord
+#     bottom right bounding box coord
+#     delay intensity
+#     clicktype specification: use 'left', 'right', or '' for a non-click cursor move
+# this method takes in a bounding box, delay intesnity, and type of click and performs the action on a random pixel coord
+# within the bounding box
 def target_box(top_left, bottom_right, intensity=81, clicktype="left", deterministic=False):
     x, y = random.choice(range(top_left[0], bottom_right[0])), random.choice(range(top_left[1], bottom_right[1]))
 
