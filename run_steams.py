@@ -47,11 +47,11 @@ def locate_temp(path):
     res = cv2.matchTemplate(bank_grab, bank_temp, method)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
-    # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum
     w, h, _ = bank_temp.shape
     top_left = max_loc
     bottom_right = (top_left[0] + w, top_left[1] + h)
 
+    # debug UI showing template match bounding box overlayed with screengrab of OSRS client
     cv2.rectangle(bank_grab, (top_left[0] + w, top_left[1] + h), (bottom_right[0] - w, bottom_right[1] - h), (255, 100, 100), 20)
     plt.subplot(121),plt.imshow(res,cmap = 'gray')
     plt.title('Matching Rresult'), plt.xticks([]), plt.yticks([])
@@ -87,6 +87,7 @@ def base_run():
     pag.scroll(1400)
     delay()
 
+    # locate where the chest is and right click on it
     top_left, bottom_right = locate_temp('C:\\Users\\jsp4k\\Desktop\\smdev\\bank_temp.PNG')
 
     start, stop, step = (.9, 1.2, .05)
